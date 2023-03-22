@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<odoo>
+    <record id="view_production_lot_view_tree_inh" model="ir.ui.view">
+        <field name="name">stock.production.lot.tree.inherit.product.expiry.inh</field>
+        <field name="model">stock.production.lot</field>
+        <field name="inherit_id" ref="product_expiry.view_production_lot_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='expiration_date']" position="replace">
+                <field name="expiration_date"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

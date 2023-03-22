@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<odoo>
+    <record id="pos_details_wizard_form_inh" model="ir.ui.view">
+        <field name="name">pos.details.wizard.form.inh</field>
+        <field name="model">pos.details.wizard</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_details_wizard"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='start_date']" position="before">
+                <field name="flag_user" invisible="1"/>
+                <field name="user_id" attrs="{'readonly': [('flag_user','!=',True)]}"/>
+            </xpath>
+
+
+        </field>
+    </record>
+</odoo>

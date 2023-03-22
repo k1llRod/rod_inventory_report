@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="report_saledetails_inh" inherit_id="point_of_sale.report_saledetails">
+<!--            <xpath expr="//t/t[2]/t/div/strong" position="after">-->
+<!--                <h1>Test</h1>-->
+<!--                <h3><t t-esc="user_id_name" /></h3>-->
+<!--            </xpath>-->
+            <xpath expr="//div[@class='text-center']" position="inside">
+                <div><strong><t t-esc="user_id_name" /></strong></div>
+            </xpath>
+            <xpath expr="//div[@class='text-center']/strong" position="replace">
+                <t t-esc="date_start" t-options="{'widget': 'date'}"/> - <t t-esc="date_stop" t-options="{'widget': 'date'}"/>
+            </xpath>
+        </template>
+    </data>
+</odoo>

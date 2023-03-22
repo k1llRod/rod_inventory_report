@@ -1,0 +1,47 @@
+<odoo>
+    <record id="stock.action_production_lot_form" model="ir.actions.act_window">
+        <field name="name">Fechas de vencimiento</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">stock.production.lot</field>
+<!--        <field name="view_ids"-->
+<!--                   eval="[(5, 0, 0),-->
+<!--                          (0, 0, {'view_mode': 'tree', 'view_id': ref('rod_inventory_report.view_production_lot_view_tree_inh')})]"/>-->
+        <field name="context">{}</field>
+        <field name="help" type="html">
+          <p class="o_view_nocontent_smiling_face">
+            Add a lot/serial number
+          </p><p>
+            Lots/Serial numbers help you tracking the path followed by your products.
+            From their traceability report you will see the full history of their use, as well as their composition.
+          </p>
+        </field>
+    </record>
+
+    <record model="ir.actions.server" id="action_views_stock_zero">
+        <field name="name">Inventario stock cero</field>
+        <field name="model_id" ref="stock.model_product_product"/>
+        <field name="type">ir.actions.server</field>
+        <field name="state">code</field>
+        <field name="code">
+            action = {
+                "name": "Inventario stock menor o igual a cero",
+                "type": "ir.actions.act_window",
+                "view_mode": "tree,form",
+                "res_model": "product.product",
+                "context": {'search_default_quatity_zero_negative': 1},
+            }
+        </field>
+    </record>
+
+    <menuitem id="menu_report_pos_date_due"
+              name="Fechas de vencimiento"
+              action="stock.action_production_lot_form"
+              parent="point_of_sale.menu_point_rep"
+              sequence="5"/>
+    <menuitem id="product_product_menu_pos"
+              name="Reporte de inventario"
+              action="action_views_stock_zero"
+              parent="point_of_sale.menu_point_rep"
+              sequence="6"/>
+
+</odoo>

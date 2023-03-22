@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="product_product_search_inh" model="ir.ui.view">
+            <field name="name">product.product.search.inh</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_search_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='services']" position="before">
+                    <filter name="real_stock_available" string="Stock menor o igual a cero" domain="['|',('qty_available','&lt;',0),('qty_available','=',0)]"/>
+                    <separator/>
+                </xpath>
+<!--                <xpath expr="//field[@name='attribute_line_ids']" position="after">-->
+<!--                    <searchpanel>-->
+<!--                        <field name="pos_categ_id" string="Laboratorios" icon="fa-users"/>-->
+<!--                    </searchpanel>-->
+<!--                </xpath>-->
+                <search>
+                    <searchpanel colspan="5">
+                        <field name="pos_categ_id" string="Laboratorios" icon="fa-users"/>
+                    </searchpanel>
+                </search>
+            </field>
+        </record>
+    </data>
+</odoo>
