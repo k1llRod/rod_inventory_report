@@ -8,9 +8,11 @@
 <!--            </xpath>-->
             <xpath expr="//div[@class='text-center']" position="inside">
                 <div><strong><t t-esc="user_id_name" /></strong></div>
+                <div>Asistencia: <t t-esc="print_register"/></div>
             </xpath>
             <xpath expr="//div[@class='text-center']/strong" position="replace">
                 <t t-esc="date_start" t-options="{'widget': 'date'}"/> - <t t-esc="date_stop" t-options="{'widget': 'date'}"/>
+
             </xpath>
         </template>
     </data>

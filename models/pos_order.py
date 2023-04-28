@@ -1,5 +1,6 @@
 
 import logging
+from datetime import date
 from datetime import timedelta
 from odoo import api, fields, models, _
 from odoo.osv.expression import AND
@@ -24,7 +25,32 @@ class ReportSaleDetails(models.AbstractModel):
 
         :returns: dict -- Serialised sales.
         """
+        if self.env.user.has_group('purchase.group_purchase_manager'):
+            if self.env['hr.attendance'].search([('employee_id', '=', self.env.user.employee_id.id)]):
+                verify_date_today = date.today().strftime('%d/%m/%Y') in self.env['hr.attendance'].search([('employee_id', '=', self.env.user.employee_id.id)])[0].display_name
+            else:
+                verify_date_today = False
+        else:
+            verify_date_today = date.today().strftime('%d/%m/%Y') in self.env['hr.attendance'].search([('employee_id', '=', self.env.user.employee_id.id)])[0].display_name
 
+        # verify_date_today = date.today().strftime('%d/%m/%Y')  in self.env['hr.attendance'].search([('employee_id','=',self.env.user.employee_id.id)])[0].display_name
+        message = ''
+        if verify_date_today:
+            employee_print_register = self.env['hr.attendance'].search([('employee_id','=',self.env.user.employee_id.id)])[0]
+            check_in = employee_print_register.check_in if employee_print_register.check_in != False else 'No registro su hora de entrada'
+            check_out = employee_print_register.check_out if employee_print_register.check_out != False else 'No registro su hora de salida'
+        else:
+            check_in = False
+            check_out = False
+        if check_in == False:
+            message = 'No registro su hora de entrada en la fecha '+str(date.today())
+            if check_out == False and check_in != False:
+                message = 'No registro su hora de salida en la fecha '+str(date.today())
+
+        print_register = self.env['hr.attendance'].search([('employee_id','=',self.env.user.employee_id.id)])[0].display_name if verify_date_today and check_out != False else message
+        if check_out == 'No registro su hora de salida':
+            print_register = print_register + ' - ' + check_out
+        # print_register = print_register + ' - ' + check_out if check_out != False else message
         domain = [('state', 'in', ['paid', 'invoiced', 'done'])]
         domain_session = []
         if (session_ids and user_id != False):
@@ -68,14 +94,14 @@ class ReportSaleDetails(models.AbstractModel):
 
         session_ids = self.env['pos.session'].search(domain_session)
         #orders = self.env['pos.order'].search(domain)
+        total = 0.0
+        payments = []
+        taxes = {}
+        products_sold = {}
         for session in session_ids:
             orders = session.order_ids
             user_currency = self.env.company.currency_id
-
-            total = 0.0
-            products_sold = {}
             products_total_sold = []
-            taxes = {}
             for order in orders:
                 if user_currency != order.pricelist_id.currency_id:
                     total += order.pricelist_id.currency_id._convert(
@@ -118,9 +144,10 @@ class ReportSaleDetails(models.AbstractModel):
             products_total_sold.append(products_sold)
 
         return {
-            'user_id_name': self.env.user.name,
-            'currency_precision': user_currency.decimal_places,
-            'total_paid': user_currency.round(total),
+            'print_register': print_register,
+            'user_id_name': session_ids[0].user_id.name if session_ids else 'Sin usuario',
+            'currency_precision': self.env.company.currency_id.decimal_places,
+            'total_paid': self.env.company.currency_id.round(total) if total else 0.0,
             'payments': payments,
             'company_name': self.env.company.name,
             'taxes': list(taxes.values()),
@@ -132,7 +159,7 @@ class ReportSaleDetails(models.AbstractModel):
                 'price_unit': price_unit,
                 'discount': discount,
                 'uom': product.uom_id.name
-            } for (product, price_unit, discount), qty in products_sold.items()], reverse=False)
+            } for (product, price_unit, discount), qty in products_sold.items()], key=lambda l: l['product_name'])
         }
 
     @api.model
