@@ -6,6 +6,10 @@ class PosDetails(models.TransientModel):
     def default_user_default(self):
         return self.env.user.id
 
+    user_id = fields.Many2one('res.users', string='Encargado de caja',default=default_user_default)
+    start_date = fields.Date(string='Fecha de inicio', required=True, default=fields.Date.context_today)
+    end_date = fields.Date(string='Fecha final', required=True, default=fields.Date.context_today)
+    flag_user = fields.Boolean(string='Activar readonly', compute='compute_flag_user', store=True)
     @api.depends('user_id')
     def compute_flag_user(self):
         if self.env.user.has_group('purchase.group_purchase_manager'):
@@ -13,11 +17,14 @@ class PosDetails(models.TransientModel):
         else:
             self.flag_user = False
 
-    user_id = fields.Many2one('res.users', string='Encargado de caja',default=default_user_default)
-    start_date = fields.Date(string='Fecha de inicio', required=True, default=fields.Date.context_today)
-    end_date = fields.Date(string='Fecha final', required=True, default=fields.Date.context_today)
-    flag_user = fields.Boolean(string='Activar readonly', compute=compute_flag_user)
 
+
+    # @api.depends('user_id')
+    # def compute_flag_user(self):
+    #     if self.env.user.has_group('purchase.group_purchase_manager'):
+    #         self.flag_user = True
+    #     else:
+    #         self.flag_user = False
 
 
 

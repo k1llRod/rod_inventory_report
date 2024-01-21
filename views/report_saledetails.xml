@@ -12,7 +12,19 @@
             </xpath>
             <xpath expr="//div[@class='text-center']/strong" position="replace">
                 <t t-esc="date_start" t-options="{'widget': 'date'}"/> - <t t-esc="date_stop" t-options="{'widget': 'date'}"/>
-
+            </xpath>
+            <xpath expr="//div[@class='page']/table/thead/tr/th[3]" position="after">
+                <th>Precio original</th>
+            </xpath>
+            <xpath expr="//div[@class='page']/table/thead/tr/th[3]" position="replace">
+                <th>Precio de unidad</th>
+            </xpath>
+            <xpath expr="//div[@class='page']/table/tbody/tr/td[3]" position="after">
+                <td>
+                    <t t-if="line['price_unit'] !=  line['price_unit_original']">
+                        <t t-esc="line['price_unit_original']" />
+                    </t>
+                </td>
             </xpath>
         </template>
     </data>
