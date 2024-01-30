@@ -9,7 +9,7 @@ class ResUsers(models.Model):
 
     # tz_offset = fields.Char(string='TEST', readonly=False)
 
-    @api.depends('tz')
-    def _compute_tz_offset(self):
-        for user in self:
-            user.tz_offset = datetime.datetime.now(pytz.timezone(user.tz or 'GMT')).strftime('%z')
+    # @api.depends('tz')
+    # def _compute_tz_offset(self):
+    #     for user in self:
+    #         user.tz_offset = datetime.datetime.now(pytz.timezone(user.tz or 'GMT')).strftime('%z')
